@@ -8,7 +8,7 @@ router.get('/', )
 
 /* GET home page. */
 router.get('/', (req, res, next) => {
-  res.render('index', { title: 'Members Only' });
+  res.render('index', { title: 'Members Only'});
 });
 
 module.exports = router;
