@@ -16,7 +16,6 @@ const Schema = mongoose.Schema;
 
 // Router require calls
 const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
 
 // DB Functions
 mongoose.set('strictQuery', false);
