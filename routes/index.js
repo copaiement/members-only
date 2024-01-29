@@ -11,4 +11,25 @@ router.get('/', (req, res, next) => {
   res.render('index', { title: 'Members Only'});
 });
 
+// GET new message page
+router.get('/new', (req, res, next) => {
+  res.render('form', { title: 'New Message' , messages: messages});
+});
+
+// POST new message
+router.post('/new', async (req, res, next) => {
+  const newMsg = { text: req.body.msg, user: req.body.usr, added: new Date() };
+  // update DB with new message
+  await update(newMsg);
+  // redirect to home
+  res.redirect('/');
+});
+
+// GET signup page
+router.get('/signup', (req, res, next) => {
+  res.render('signup', { title: 'Signup Page'});
+});
+
+// POST signup
+
 module.exports = router;

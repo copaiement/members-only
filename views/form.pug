@@ -1,0 +1,10 @@
+extends index
+
+block new_msg
+  h3= title
+  form(class="input-form" method="POST" action="/new")
+    label(class="input-label" for="msg") Message: 
+    input(class="msg-field" id="msg" name="msg" type="text" placeholder="Enter your message..." required)
+    label(class="input-label" for="usr") Username: 
+    input(class="usr-field" id="usr" name="usr" type="text" placeholder="User" required)
+    button(class="submit-btn" type="submit") Submit 
