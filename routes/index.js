@@ -31,5 +31,18 @@ router.get('/signup', (req, res, next) => {
 });
 
 // POST signup
+router.post('/signup', async (req, res, next) => {
+  bcrypt.hash(req.body.password, 10, async (err, hashedPassword) => {
+    if (err) return next (err);
+
+    const user = new User({
+      username: req.body.username,
+      password: hashedPassword,
+    });
+
+    await user.save();
+    res.redirect('/');
+  })
+})
 
 module.exports = router;
