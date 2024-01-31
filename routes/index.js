@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const asyncHandler = require('express-async-handler')
+const { body, validationResult } = require('express-validator');
 
 // Require controller modules
 //const message_controller = require('../controllers/messageController');
@@ -7,6 +9,7 @@ const router = express.Router();
 router.get('/', )
 
 /* GET home page. */
+// add async mongoose DB pull here
 router.get('/', (req, res, next) => {
   res.render('index', { title: 'Members Only'});
 });
@@ -32,12 +35,23 @@ router.get('/signup', (req, res, next) => {
 
 // POST signup
 router.post('/signup', async (req, res, next) => {
+  // Validate and sanitize fields
+  body('email')
+    .trim()
+    .isLength({ min: 7})
+    .escape()
+    .withMessage('Email must be specified.')
+    .isAlphanumeric('en-US', { ignore: ' ', '@', '.' })
+    .withMessage('Email can only have numbers, letters, "@", and "."')
+  
   bcrypt.hash(req.body.password, 10, async (err, hashedPassword) => {
     if (err) return next (err);
 
     const user = new User({
+      email: req.body.email,
       username: req.body.username,
       password: hashedPassword,
+      userType: 'basic',
     });
 
     await user.save();
