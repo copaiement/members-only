@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const bcrypt = require('bcryptjs');
 const asyncHandler = require('express-async-handler')
 const { body, validationResult } = require('express-validator');
 
@@ -41,8 +42,9 @@ router.post('/signup', async (req, res, next) => {
     .isLength({ min: 7})
     .escape()
     .withMessage('Email must be specified.')
-    .isAlphanumeric('en-US', { ignore: ' ', '@', '.' })
-    .withMessage('Email can only have numbers, letters, "@", and "."')
+    .isEmail()
+    .escape()
+    .withMessage('Email address is not valid')
   
   bcrypt.hash(req.body.password, 10, async (err, hashedPassword) => {
     if (err) return next (err);
@@ -53,6 +55,8 @@ router.post('/signup', async (req, res, next) => {
       password: hashedPassword,
       userType: 'basic',
     });
+
+    if (!errors.isEmpty())
 
     await user.save();
     res.redirect('/');
