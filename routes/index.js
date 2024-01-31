@@ -43,6 +43,11 @@ router.post('/signup', async (req, res, next) => {
     await user.save();
     res.redirect('/');
   })
-})
+});
+
+// GET login page
+router.get('/login', (req, res, next) => {
+  res.render('login', { title: 'Login Page'});
+});
 
 module.exports = router;
