@@ -44,23 +44,40 @@ router.post('/signup', async (req, res, next) => {
     .withMessage('Email must be specified.')
     .isEmail()
     .escape()
-    .withMessage('Email address is not valid')
+    .withMessage('Email address is not valid'),
+  body('username')
+    .trim()
+    .isLength({ min: 3 })
+    .escape()
+    .withMessage('Username must be specified'),
+    
   
-  bcrypt.hash(req.body.password, 10, async (err, hashedPassword) => {
-    if (err) return next (err);
-
-    const user = new User({
-      email: req.body.email,
-      username: req.body.username,
-      password: hashedPassword,
-      userType: 'basic',
+  //check for errors
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    res.render('signup', {
+       title: 'Signup Page',
+       email: req.body.email,
+       username: req.body.username,
+       errors: errors.array(),
     });
-
-    if (!errors.isEmpty())
-
-    await user.save();
-    res.redirect('/');
-  })
+  } else {
+    bcrypt.hash(req.body.password, 10, async (err, hashedPassword) => {
+      if (err) return next (err);
+  
+      const user = new User({
+        email: req.body.email,
+        username: req.body.username,
+        password: hashedPassword,
+        userType: 'basic',
+      });
+  
+      if (!errors.isEmpty())
+  
+      await user.save();
+      res.redirect('/');
+    });
+  }
 });
 
 // GET login page
