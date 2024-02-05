@@ -3,11 +3,9 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const asyncHandler = require('express-async-handler')
 const { body, validationResult } = require('express-validator');
-
+const User = require('../models/user');
 // Require controller modules
 //const message_controller = require('../controllers/messageController');
-
-router.get('/', )
 
 /* GET home page. */
 // add async mongoose DB pull here
@@ -35,7 +33,7 @@ router.get('/signup', (req, res, next) => {
 });
 
 // POST signup
-router.post('/signup',
+router.post('/signup', [
   // Validate and sanitize fields
   body('email')
     .trim()
@@ -44,7 +42,14 @@ router.post('/signup',
     .withMessage('Email must be specified.')
     .isEmail()
     .escape()
-    .withMessage('Email address is not valid'),
+    .withMessage('Email address is not valid')
+    .bail()
+    .custom(async value => {
+      const existingUser = await User.findOne({ email: value }).exec();
+      if (existingUser) {
+        throw new Error('E-mail already in use');
+      }
+    }),
   body('username')
     .trim()
     .isLength({ min: 3 })
@@ -53,6 +58,7 @@ router.post('/signup',
     .isAlphanumeric()
     .escape()
     .withMessage('Username has non-alphanumeric characters.'),
+
   body('password')
     .trim()
     .isLength({ min: 8 })
@@ -63,8 +69,20 @@ router.post('/signup',
     .withMessage('Password must contain only alphanumeric characters'),
 
   // add custom validation to check for existing email address
+  body('confirm-password')
+    .trim()
+    .isLength({ min: 8 })
+    .escape()
+    .withMessage('Please confirm password')
+    .bail() 
+    .custom(async(confirmPassword, { req }) => {
+      const password = req.body.password;
+      if (password !== confirmPassword) {
+        throw new Error('Passwords do not match')
+      }
+    }),
 
-  async (req, res, next) => {
+  asyncHandler(async (req, res, next) => {
     //check for errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -75,24 +93,27 @@ router.post('/signup',
         errors: errors.array(),
       });
     } else {
-      bcrypt.hash(req.body.password, 10, async (err, hashedPassword) => {
-        if (err) return next (err);
+      // bcrypt.hash(req.body.password, 10, async (err, hashedPassword) => {
+      //   if (err) return next (err);
     
-        const user = new User({
-          email: req.body.email,
-          username: req.body.username,
-          password: hashedPassword,
-          userType: 'basic',
-        });
-    
-        if (!errors.isEmpty())
-    
-        await user.save();
-        res.redirect('/');
+      const user = new User({
+        email: req.body.email,
+        username: req.body.username,
+        password: req.body.password,
+        userType: 'basic',
       });
+    
+      //   if (!errors.isEmpty())
+    
+      //   await user.save();
+      //   res.redirect('/');
+      // });
+      await user.save();
+      res.redirect('/');
     }
+    //}
   }
-);
+)]);
 
 // GET login page
 router.get('/login', (req, res, next) => {
