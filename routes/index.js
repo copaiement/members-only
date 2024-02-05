@@ -35,7 +35,7 @@ router.get('/signup', (req, res, next) => {
 });
 
 // POST signup
-router.post('/signup', async (req, res, next) => {
+router.post('/signup',
   // Validate and sanitize fields
   body('email')
     .trim()
@@ -49,36 +49,50 @@ router.post('/signup', async (req, res, next) => {
     .trim()
     .isLength({ min: 3 })
     .escape()
-    .withMessage('Username must be specified'),
-    
-  
-  //check for errors
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    res.render('signup', {
-       title: 'Signup Page',
-       email: req.body.email,
-       username: req.body.username,
-       errors: errors.array(),
-    });
-  } else {
-    bcrypt.hash(req.body.password, 10, async (err, hashedPassword) => {
-      if (err) return next (err);
-  
-      const user = new User({
+    .withMessage('Username must be specified')
+    .isAlphanumeric()
+    .escape()
+    .withMessage('Username has non-alphanumeric characters.'),
+  body('password')
+    .trim()
+    .isLength({ min: 8 })
+    .escape()
+    .withMessage('Password must be at least 8 characters')
+    .isAlphanumeric()
+    .escape()
+    .withMessage('Password must contain only alphanumeric characters'),
+
+  // add custom validation to check for existing email address
+
+  async (req, res, next) => {
+    //check for errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.render('signup', {
+        title: 'Signup Page',
         email: req.body.email,
         username: req.body.username,
-        password: hashedPassword,
-        userType: 'basic',
+        errors: errors.array(),
       });
-  
-      if (!errors.isEmpty())
-  
-      await user.save();
-      res.redirect('/');
-    });
+    } else {
+      bcrypt.hash(req.body.password, 10, async (err, hashedPassword) => {
+        if (err) return next (err);
+    
+        const user = new User({
+          email: req.body.email,
+          username: req.body.username,
+          password: hashedPassword,
+          userType: 'basic',
+        });
+    
+        if (!errors.isEmpty())
+    
+        await user.save();
+        res.redirect('/');
+      });
+    }
   }
-});
+);
 
 // GET login page
 router.get('/login', (req, res, next) => {
