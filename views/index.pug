@@ -6,7 +6,6 @@ block content
   if currentUser
     p Welcome #{currentUser.username}
     .links
-      a(href="/refresh") Refresh Messages
       a(href="/new") Add a Message
     block new_msg
     div.message-container

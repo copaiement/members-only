@@ -24,17 +24,48 @@ router.get('/', async (req, res, next) => {
 
 // GET new message page
 router.get('/new', (req, res, next) => {
-  res.render('form', { title: 'New Message' , currentUser: req.user, messages: messages});
+  res.render('form', { title: 'New Message' , currentUser: req.user });
 });
 
 // POST new message
-router.post('/new', async (req, res, next) => {
-  const newMsg = { text: req.body.msg, user: req.body.usr, added: new Date() };
-  // update DB with new message
-  await update(newMsg);
-  // redirect to home
-  res.redirect('/');
-});
+router.post('/new', [
+  // Validate and sanitize fields.
+  body('message')
+    .trim()
+    .isLength({ min: 3 })
+    .escape()
+    .withMessage('Message must have text.')
+    .matches(/^[A-Za-z0-9 .,'!&?"$]+$/)
+    .withMessage('Message has non-alphanumeric characters.'),
+
+  // Process request after validation and sanitization.
+  asyncHandler(async (req, res, next) => {
+    // Extract the validation errors from a request.
+    const errors = validationResult(req);
+    const message = new Message({
+      text: req.body.message,
+      username: req.user.username,
+      addedDate: new Date(),
+    });
+
+    if (!errors.isEmpty()) {
+      // There are errors. Render form again with sanitized values/errors messages.
+      res.render('form', {
+        message: message.text,
+        errors: errors.array(),
+        title: 'New Message' , 
+        currentUser: req.user
+      });
+    } else {
+      // Data from form is valid.
+
+      // Save area.
+      await message.save();
+      // Redirect to homepage
+      res.redirect('/');
+    }
+  }),
+]);
 
 // GET signup page
 router.get('/signup', (req, res, next) => {
@@ -132,51 +163,7 @@ router.get('/login', (req, res, next) => {
   res.render('login', { title: 'Login Page'});
 });
 
-// // POST login page
-// router.post('/login', [
-//   // Validate and sanitize fields
-//   body('username')
-//     .trim()
-//     .isLength({ min: 3 })
-//     .escape()
-//     .withMessage('Username must be specified')
-//     .bail()
-//     .custom(async username => {
-//       const existingUsername = await User.findOne({ username: username }).exec();
-//       if (!existingUsername) {
-//         throw new Error('Username does not exist');
-//       }
-//     }),
-
-//   body('password')
-//     .trim()
-//     .isLength({ min: 3 })
-//     .escape()
-//     .withMessage('Password must be specified')
-//     .bail()
-//     .custom(async(password, { req }) => {
-//       const user = await User.findOne({ username: req.body.username }).exec();
-//       if (user.password !== password) {
-//         throw new Error('Incorrect password');
-//       }
-//     }),
-
-//   asyncHandler(async (req, res, next) => {
-//     //check for errors
-//     const errors = validationResult(req);
-//     if (!errors.isEmpty()) {
-//       res.render('login', {
-//         title: 'Login',
-//         username: req.body.username,
-//         errors: errors.array(),
-//       });
-//     } else {
-//       console.log('login success');
-//       res.redirect('/');
-//     }
-//   })
-// ]);
-
+// POST login page
 router.post('/login',
   passport.authenticate('local', {
     successRedirect: '/',
