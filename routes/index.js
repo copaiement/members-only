@@ -1,21 +1,30 @@
 const express = require('express');
 const router = express.Router();
+const passport = require('passport');
 const bcrypt = require('bcryptjs');
-const asyncHandler = require('express-async-handler')
+const asyncHandler = require('express-async-handler');
 const { body, validationResult } = require('express-validator');
 const User = require('../models/user');
+const Message = require('../models/message')
 // Require controller modules
 //const message_controller = require('../controllers/messageController');
 
 /* GET home page. */
 // add async mongoose DB pull here
-router.get('/', (req, res, next) => {
-  res.render('index', { title: 'Members Only'});
+router.get('/', async (req, res, next) => {
+  //const messages = await Message.find().exec();
+  // TEMP
+  const messages = [];
+  if (messages.length === 0) {
+    res.render('index', { title: 'Members Only', currentUser: req.user});
+  } else {
+    res.render('index', { title: 'Members Only', currentUser: req.user, messages: messages});
+  }
 });
 
 // GET new message page
 router.get('/new', (req, res, next) => {
-  res.render('form', { title: 'New Message' , messages: messages});
+  res.render('form', { title: 'New Message' , currentUser: req.user, messages: messages});
 });
 
 // POST new message
@@ -122,5 +131,58 @@ router.post('/signup', [
 router.get('/login', (req, res, next) => {
   res.render('login', { title: 'Login Page'});
 });
+
+// // POST login page
+// router.post('/login', [
+//   // Validate and sanitize fields
+//   body('username')
+//     .trim()
+//     .isLength({ min: 3 })
+//     .escape()
+//     .withMessage('Username must be specified')
+//     .bail()
+//     .custom(async username => {
+//       const existingUsername = await User.findOne({ username: username }).exec();
+//       if (!existingUsername) {
+//         throw new Error('Username does not exist');
+//       }
+//     }),
+
+//   body('password')
+//     .trim()
+//     .isLength({ min: 3 })
+//     .escape()
+//     .withMessage('Password must be specified')
+//     .bail()
+//     .custom(async(password, { req }) => {
+//       const user = await User.findOne({ username: req.body.username }).exec();
+//       if (user.password !== password) {
+//         throw new Error('Incorrect password');
+//       }
+//     }),
+
+//   asyncHandler(async (req, res, next) => {
+//     //check for errors
+//     const errors = validationResult(req);
+//     if (!errors.isEmpty()) {
+//       res.render('login', {
+//         title: 'Login',
+//         username: req.body.username,
+//         errors: errors.array(),
+//       });
+//     } else {
+//       console.log('login success');
+//       res.redirect('/');
+//     }
+//   })
+// ]);
+
+router.post('/login',
+  passport.authenticate('local', {
+    successRedirect: '/',
+    failureRedirect: '/login'
+  }),
+);
+
 
 module.exports = router;

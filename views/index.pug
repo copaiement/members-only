@@ -4,16 +4,20 @@ block content
   h1= title
   p Welcome to #{title}
   if currentUser
+    p Welcome #{currentUser.username}
     .links
       a(href="/refresh") Refresh Messages
       a(href="/new") Add a Message
     block new_msg
     div.message-container
-      each message in messages
-        .message-tile
-          .message-text #{message.text}
-          .message-user #{message.user} 
-          .message-added #{message.post_date_formatted}
+      if messages
+        each message in messages
+          .message-tile
+            .message-text #{message.text}
+            .message-user #{message.user} 
+            .message-added #{message.post_date_formatted}
+      else
+        p Nothing Here
   else
     p Please Create Account or Log In to view posts
     a(href='/signup') Sign Up
