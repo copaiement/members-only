@@ -44,9 +44,9 @@ router.post('/signup', [
     .escape()
     .withMessage('Email address is not valid')
     .bail()
-    .custom(async value => {
-      const existingUser = await User.findOne({ email: value }).exec();
-      if (existingUser) {
+    .custom(async email => {
+      const existingEmail = await User.findOne({ email: email }).exec();
+      if (existingEmail) {
         throw new Error('E-mail already in use');
       }
     }),
@@ -57,7 +57,14 @@ router.post('/signup', [
     .withMessage('Username must be specified')
     .isAlphanumeric()
     .escape()
-    .withMessage('Username has non-alphanumeric characters.'),
+    .withMessage('Username has non-alphanumeric characters.')
+    .bail()
+    .custom(async username => {
+      const existingUsername = await User.findOne({ username: username }).exec();
+      if (existingUsername) {
+        throw new Error('Username already in use');
+      }
+    }),
 
   body('password')
     .trim()
@@ -66,7 +73,8 @@ router.post('/signup', [
     .withMessage('Password must be at least 8 characters')
     .isAlphanumeric()
     .escape()
-    .withMessage('Password must contain only alphanumeric characters'),
+    .withMessage('Password must contain only alphanumeric characters')
+    .bail(),
 
   // add custom validation to check for existing email address
   body('confirm-password')
@@ -93,27 +101,22 @@ router.post('/signup', [
         errors: errors.array(),
       });
     } else {
-      // bcrypt.hash(req.body.password, 10, async (err, hashedPassword) => {
-      //   if (err) return next (err);
-    
-      const user = new User({
-        email: req.body.email,
-        username: req.body.username,
-        password: req.body.password,
-        userType: 'basic',
-      });
-    
-      //   if (!errors.isEmpty())
-    
-      //   await user.save();
-      //   res.redirect('/');
-      // });
-      await user.save();
-      res.redirect('/');
+      bcrypt.hash(req.body.password, 10, async (err, hashedPassword) => {
+        if (err) return next (err);
+        
+        const user = new User({
+          email: req.body.email,
+          username: req.body.username,
+          password: hashedPassword,
+          userType: 'basic',
+        });
+
+        await user.save();
+        res.redirect('/');
+      })
     }
-    //}
-  }
-)]);
+  })
+]);
 
 // GET login page
 router.get('/login', (req, res, next) => {
