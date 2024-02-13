@@ -2,7 +2,7 @@ extends index
 
 block content
   h1= title
-  
+
   form(method='POST' action='')
     div.form-group
       label(for='memberCode') Upgrade Code:
@@ -10,7 +10,7 @@ block content
     button.btn.btn-primary(type='submit') Submit
 
     p Hint: a close INSPECTion might help you.
-    p.hidden Member password is: JoinTheClubTOP!
+    p.hiddenMSG Member password is: JoinTheClubTOP!
   if errors
     ul
       for error in errors

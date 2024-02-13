@@ -175,4 +175,44 @@ router.get('/upgrade', (req, res, next) => {
   res.render('upgrade', { title: 'Login Page', currentUser: req.user });
 });
 
+// POST member upgrade
+router.post('/upgrade', [
+  // Validate and sanitize fields.
+  body('memberCode')
+    .trim()
+    .isLength({ min: 3 })
+    .escape()
+    .withMessage('Message must have text.')
+    .matches(/^[A-Za-z0-9 .,'!&?"$]+$/)
+    .withMessage('Message has non-alphanumeric characters.'),
+
+  // Process request after validation and sanitization.
+  asyncHandler(async (req, res, next) => {
+    // Extract the validation errors from a request.
+    const errors = validationResult(req);
+    const message = new Message({
+      text: req.body.message,
+      username: req.user.username,
+      addedDate: new Date(),
+    });
+
+    if (!errors.isEmpty()) {
+      // There are errors. Render form again with sanitized values/errors messages.
+      res.render('form', {
+        message: message.text,
+        errors: errors.array(),
+        title: 'New Message' , 
+        currentUser: req.user
+      });
+    } else {
+      // Data from form is valid.
+
+      // Save area.
+      await message.save();
+      // Redirect to homepage
+      res.redirect('/');
+    }
+  }),
+]);
+
 module.exports = router;
