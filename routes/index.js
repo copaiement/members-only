@@ -12,11 +12,10 @@ const Message = require('../models/message')
 /* GET home page. */
 // add async mongoose DB pull here
 router.get('/', async (req, res, next) => {
-  //const messages = await Message.find().exec();
-  // TEMP
-  const messages = [];
+  const messages = await Message.find().exec();
+
   if (messages.length === 0) {
-    res.render('index', { title: 'Members Only', currentUser: req.user});
+    res.render('index', { title: 'Members Only', currentUser: req.user });
   } else {
     res.render('index', { title: 'Members Only', currentUser: req.user, messages: messages});
   }
@@ -171,5 +170,9 @@ router.post('/login',
   }),
 );
 
+// GET upgrade page
+router.get('/upgrade', (req, res, next) => {
+  res.render('upgrade', { title: 'Login Page', currentUser: req.user });
+});
 
 module.exports = router;

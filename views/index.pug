@@ -3,21 +3,32 @@ extends layout
 block content
   h1= title
   p Welcome to #{title}
+
+  //- check for login
   if currentUser
     p Welcome #{currentUser.username}
+    p Member Type: #{currentUser.userType}
     .links
       a(href="/new") Add a Message
-    block new_msg
-    div.message-container
-      if messages
-        each message in messages
-          .message-tile
-            .message-text #{message.text}
-            .message-user #{message.user} 
-            .message-added #{message.post_date_formatted}
-      else
-        p Nothing Here
+      if currentUser.userType !== 'admin'
+        a(href="/upgrade") Upgrade Membership
   else
-    p Please Create Account or Log In to view posts
+    p Please Create Account or Log In to post a message
     a(href='/signup') Sign Up
     a(href='/login') Log In
+
+  block new_msg
+
+  div.message-container
+    if messages
+      each message in messages
+        .message-tile
+          .message-text #{message.text}
+          if currentUser
+            if currentUser.userType !== 'basic'
+              .message-user #{message.user} 
+              .message-added #{message.post_date_formatted}
+            if currentUser.userType === 'admin'
+              p DELETE BUTTON HERE
+    else
+      p Nothing Here

@@ -1,0 +1,17 @@
+extends index
+
+block content
+  h1= title
+  
+  form(method='POST' action='')
+    div.form-group
+      label(for='memberCode') Upgrade Code:
+      input#memberCode.form-control(type='text' placeholder='Member code' name='memberCode' required='true' value='')
+    button.btn.btn-primary(type='submit') Submit
+
+    p Hint: a close INSPECTion might help you.
+    p.hidden Member password is: JoinTheClubTOP!
+  if errors
+    ul
+      for error in errors
+        li!= error.msg
