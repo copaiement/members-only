@@ -187,13 +187,21 @@ router.post('/upgrade', [
     .escape()
     .withMessage('Message must have text.')
     .matches(/^[A-Za-z0-9 .,'!&?"$]+$/)
-    .withMessage('Message has non-alphanumeric characters.'),
+    .escape()
+    .withMessage('Message has non-alphanumeric characters.')
+    .bail()
+    .custom(async memberCode => {
+      const passwords = await Upgrade.findOne().exec();
+      if (memberCode !== passwords.memberPass && membercode !== passwords.adminPass) {
+        throw new Error('Upgrade code is not valid');
+      }
+    }),
 
   // Process request after validation and sanitization.
   asyncHandler(async (req, res, next) => {
     // Extract the validation errors from a request.
     const errors = validationResult(req);
-    const message = new Message({
+    const user = new Message({
       text: req.body.message,
       username: req.user.username,
       addedDate: new Date(),
@@ -211,7 +219,7 @@ router.post('/upgrade', [
       // Data from form is valid.
 
       // Save area.
-      await message.save();
+      await user.save();
       // Redirect to homepage
       res.redirect('/');
     }
