@@ -23,7 +23,6 @@ const indexRouter = require('./routes/index');
 // DB Functions
 mongoose.set('strictQuery', false);
 const mongoDB = process.env.MONGODB_URI;
-mongoose.connect(mongoDB);
 
 async function DBConnect() {
   console.log('Connecting to mongo DB...')

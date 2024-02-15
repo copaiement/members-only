@@ -2,15 +2,16 @@ extends index
 
 block content
   h1= title
-
+  p Current Member Level: #{currentUser.userType}
   form(method='POST' action='')
     div.form-group
       label(for='memberCode') Upgrade Code:
       input#memberCode.form-control(type='text' placeholder='Member code' name='memberCode' required='true' value='')
     button.btn.btn-primary(type='submit') Submit
 
-    p Hint: a close INSPECTion might help you.
-    p.hiddenMSG Member password is: JoinTheClubTOP!
+  p Hint: a close INSPECTion might help you.
+  p.hiddenMSG Member password is: #{memberPass}
+  
   if errors
     ul
       for error in errors

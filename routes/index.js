@@ -5,7 +5,9 @@ const bcrypt = require('bcryptjs');
 const asyncHandler = require('express-async-handler');
 const { body, validationResult } = require('express-validator');
 const User = require('../models/user');
-const Message = require('../models/message')
+const Message = require('../models/message');
+const Upgrade = require('../models/upgrade');
+
 // Require controller modules
 //const message_controller = require('../controllers/messageController');
 
@@ -171,8 +173,9 @@ router.post('/login',
 );
 
 // GET upgrade page
-router.get('/upgrade', (req, res, next) => {
-  res.render('upgrade', { title: 'Login Page', currentUser: req.user });
+router.get('/upgrade', async (req, res, next) => {
+  const passwords = await Upgrade.findOne().exec();
+  res.render('upgrade', { title: 'Login Page', currentUser: req.user, memberPass: passwords.memberPass });
 });
 
 // POST member upgrade
