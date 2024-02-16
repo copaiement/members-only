@@ -185,15 +185,20 @@ router.post('/upgrade', [
     .trim()
     .isLength({ min: 3 })
     .escape()
-    .withMessage('Message must have text.')
+    .withMessage('Please enter a code')
     .matches(/^[A-Za-z0-9 .,'!&?"$]+$/)
     .escape()
-    .withMessage('Message has non-alphanumeric characters.')
+    .withMessage('Code has non-alphanumeric characters.')
     .bail()
-    .custom(async memberCode => {
+    .custom(async (memberCode, { req }) => {
       const passwords = await Upgrade.findOne().exec();
+      const currentMemberType = req.body.currentUser.userType;
+      // password does not match DB stored upgrade pass
       if (memberCode !== passwords.memberPass && membercode !== passwords.adminPass) {
         throw new Error('Upgrade code is not valid');
+      // member password entered, user already member
+      } else if (currentMemberType === 'member' && memberCode === passwords.memberPass) {
+        throw new Error('Already a member!');
       }
     }),
 
@@ -201,24 +206,37 @@ router.post('/upgrade', [
   asyncHandler(async (req, res, next) => {
     // Extract the validation errors from a request.
     const errors = validationResult(req);
-    const user = new Message({
-      text: req.body.message,
-      username: req.user.username,
-      addedDate: new Date(),
-    });
+    // Get current passwords
+    const passwords = await Upgrade.findOne().exec();
+    // Upgrade user accordingly
+    if (req.body.memberCode === passwords.adminPass) {
+      const user = new Message({
+        email: req.user.email,
+        username: req.user.username,
+        password: req.user.password,
+        userType: 'admin',
+      });
+    } else {
+      const user = new Message({
+        email: req.user.email,
+        username: req.user.username,
+        password: req.user.password,
+        userType: 'member',
+      });
+    }
 
     if (!errors.isEmpty()) {
       // There are errors. Render form again with sanitized values/errors messages.
-      res.render('form', {
-        message: message.text,
+      res.render('upgrade', {
         errors: errors.array(),
-        title: 'New Message' , 
-        currentUser: req.user
+        title: 'Login Page' , 
+        currentUser: req.user,
+        memberPass: passwords.memberPass,
       });
     } else {
       // Data from form is valid.
 
-      // Save area.
+      // Save user.
       await user.save();
       // Redirect to homepage
       res.redirect('/');
