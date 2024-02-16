@@ -1,6 +1,17 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
-  padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  background: rgb(255,255,255);
+  background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(255,226,163,1) 100%);  
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 a {
@@ -9,4 +20,39 @@ a {
 
 .hiddenMSG {
   display: none;
+}
+
+.header,
+.footer {
+  color: rgb(0, 0, 0);
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.header {
+  background: rgb(255,255,255);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.fake-border {
+  width: 75%;
+  border: 2px solid black;
+  align-self: left;
+}
+
+.content {
+  padding: 1rem;
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+}
+
+.footer {
+  background: rgb(255,226,163);
+  padding: .75rem;
+  border-top: 2px solid black;
 }

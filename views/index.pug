@@ -1,34 +1,35 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+  div.content
+    h1= title
+    p Welcome to #{title}
 
-  //- check for login
-  if currentUser
-    p Welcome #{currentUser.username}
-    p Member Type: #{currentUser.userType}
-    .links
-      a(href="/new") Add a Message
-      if currentUser.userType !== 'admin'
-        a(href="/upgrade") Upgrade Membership
-  else
-    p Please Create Account or Log In to post a message
-    a(href='/signup') Sign Up
-    a(href='/login') Log In
-
-  block new_msg
-
-  div.message-container
-    if messages
-      each message in messages
-        .message-tile
-          .message-text #{message.text}
-          if currentUser
-            if currentUser.userType !== 'basic'
-              .message-user #{message.username} 
-              .message-added #{message.addedDate_formatted}
-            if currentUser.userType === 'admin'
-              p DELETE BUTTON HERE
+    //- check for login
+    if currentUser
+      p Welcome #{currentUser.username}
+      p Member Type: #{currentUser.userType}
+      .links
+        a(href="/new") Add a Message
+        if currentUser.userType !== 'admin'
+          a(href="/upgrade") Upgrade Membership
     else
-      p Nothing Here
+      p Please Create Account or Log In to post a message
+      a(href='/signup') Sign Up
+      a(href='/login') Log In
+
+    block new_msg
+
+    div.message-container
+      if messages
+        each message in messages
+          .message-tile
+            .message-text #{message.text}
+            if currentUser
+              if currentUser.userType !== 'basic'
+                .message-user #{message.username} 
+                .message-added #{message.addedDate_formatted}
+              if currentUser.userType === 'admin'
+                p DELETE BUTTON HERE
+      else
+        p Nothing Here
