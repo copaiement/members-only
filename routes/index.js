@@ -192,9 +192,9 @@ router.post('/upgrade', [
     .bail()
     .custom(async (memberCode, { req }) => {
       const passwords = await Upgrade.findOne().exec();
-      const currentMemberType = req.body.currentUser.userType;
+      const currentMemberType = req.user.userType;
       // password does not match DB stored upgrade pass
-      if (memberCode !== passwords.memberPass && membercode !== passwords.adminPass) {
+      if (memberCode !== passwords.memberPass && memberCode !== passwords.adminPass) {
         throw new Error('Upgrade code is not valid');
       // member password entered, user already member
       } else if (currentMemberType === 'member' && memberCode === passwords.memberPass) {
@@ -208,21 +208,19 @@ router.post('/upgrade', [
     const errors = validationResult(req);
     // Get current passwords
     const passwords = await Upgrade.findOne().exec();
+    // Create updated User
+    const updatedUser = new User({
+      email: req.user.email,
+      username: req.user.username,
+      password: req.user.password,
+      userType: 'basic',
+      _id: req.user.id,
+    });
     // Upgrade user accordingly
     if (req.body.memberCode === passwords.adminPass) {
-      const user = new Message({
-        email: req.user.email,
-        username: req.user.username,
-        password: req.user.password,
-        userType: 'admin',
-      });
+      updatedUser.userType = 'admin';
     } else {
-      const user = new Message({
-        email: req.user.email,
-        username: req.user.username,
-        password: req.user.password,
-        userType: 'member',
-      });
+      updatedUser.userType = 'member';
     }
 
     if (!errors.isEmpty()) {
@@ -235,9 +233,9 @@ router.post('/upgrade', [
       });
     } else {
       // Data from form is valid.
-
-      // Save user.
-      await user.save();
+      // Save user
+      console.log(updatedUser);
+      await User.findByIdAndUpdate(req.user.id, updatedUser, {});
       // Redirect to homepage
       res.redirect('/');
     }
