@@ -26,8 +26,8 @@ block content
           .message-text #{message.text}
           if currentUser
             if currentUser.userType !== 'basic'
-              .message-user #{message.user} 
-              .message-added #{message.post_date_formatted}
+              .message-user #{message.username} 
+              .message-added #{message.addedDate_formatted}
             if currentUser.userType === 'admin'
               p DELETE BUTTON HERE
     else

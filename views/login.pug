@@ -11,6 +11,7 @@ block content
       label(for='password') Password:
       input#password.form-control(type='password' placeholder='Password' name='password' required='true' value='')
     button.btn.btn-primary(type='submit') Submit
+    a.cancelBtn(href='/') Cancel
   if errors
     ul
       for error in errors

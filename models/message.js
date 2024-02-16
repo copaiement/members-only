@@ -10,7 +10,7 @@ const MessageSchema = new Schema({
 });
 
 MessageSchema.virtual('addedDate_formatted').get(function () {
-  return DateTime.fromJSDate(this.added).toLocaleString(DateTime.DATETIME_MED);
+  return DateTime.fromJSDate(this.addedDate).toLocaleString(DateTime.DATETIME_MED);
 });
 
 // Export model

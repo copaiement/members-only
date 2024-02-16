@@ -153,7 +153,12 @@ router.post('/signup', [
         });
 
         await user.save();
-        res.redirect('/');
+        
+        // login and redirect on account creation
+        req.login(user, function(err) {
+          if (err) { return next(err); }
+          return res.redirect('/');
+        });
       })
     }
   })
@@ -161,16 +166,65 @@ router.post('/signup', [
 
 // GET login page
 router.get('/login', (req, res, next) => {
-  res.render('login', { title: 'Login Page'});
+  res.render('login', { title: 'Login Page' });
 });
 
+// // POST login page
+// router.post('/login',
+//   passport.authenticate('local', {
+//     successRedirect: '/',
+//     failureRedirect: '/login',
+//     failureMessage: true,
+//   }),
+// );
+
 // POST login page
-router.post('/login',
-  passport.authenticate('local', {
-    successRedirect: '/',
-    failureRedirect: '/login'
+router.post('/login', [
+  // Validate and sanitize fields.
+  body('username')
+    .trim()
+    .isLength({ min: 3 })
+    .escape()
+    .withMessage('Please enter a username'),
+  
+  body('password')
+    .trim()
+    .isLength({ min: 3 })
+    .escape()
+    .withMessage('Please enter a password'),
+
+  // Process request after validation and sanitization.
+  asyncHandler(async (req, res, next) => {
+    // Extract the validation errors from a request.
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      // There are errors. Render form again with sanitized values/errors messages.
+      console.log(errors.array());
+      res.render('login', {
+        title: 'Login Page',
+        errors: errors.array(), 
+      });
+      return;
+    }
+
+    // Data from form is valid. Check credentials.
+    passport.authenticate('local', (err, user, info) => {
+      if (err) { return next(err) }
+      if (!user) {
+        res.render('login', {         
+          title: 'Login Page',
+          errors: [{msg : info.message}], 
+        });
+        return;
+      }
+      req.login(user, (err) => {
+        if (err) { return next(err) }
+        res.redirect('/');
+      })
+    })(req, res, next);
   }),
-);
+]);
 
 // GET upgrade page
 router.get('/upgrade', async (req, res, next) => {
@@ -227,7 +281,7 @@ router.post('/upgrade', [
       // There are errors. Render form again with sanitized values/errors messages.
       res.render('upgrade', {
         errors: errors.array(),
-        title: 'Login Page' , 
+        title: 'Upgrade Page' , 
         currentUser: req.user,
         memberPass: passwords.memberPass,
       });
