@@ -1,6 +1,15 @@
 extends layout
 
 block content
-  div.logout-message You have successfully logged out
-  div.logout-message You will be returned to the home page shortly.
-  a.logout-now-btn(href='/') Click Here to Return Now
+  h1= title
+
+  form(method='POST' action='')
+    div.logout-confirm-text
+      div Are you sure you want to logout?
+    div.logout-confirm-buttons
+      button.btn.btn-primary(type='submit') Logout
+      a.cancelBtn(href='/') Cancel
+  if errors
+    ul
+      for error in errors
+        li!= error.msg

@@ -169,15 +169,6 @@ router.get('/login', (req, res, next) => {
   res.render('login', { title: 'Login Page' });
 });
 
-// // POST login page
-// router.post('/login',
-//   passport.authenticate('local', {
-//     successRedirect: '/',
-//     failureRedirect: '/login',
-//     failureMessage: true,
-//   }),
-// );
-
 // POST login page
 router.post('/login', [
   // Validate and sanitize fields.
@@ -226,28 +217,23 @@ router.post('/login', [
   }),
 ]);
 
-// POST logout page (use post instead of get for maximum security)
-// router.post('/logout', function(req, res, next){
-//   if (req.session) {
-//     req.session.destroy();
-//   }
-//   req.logout(function(err) {
-//     if (err) { return next(err); }
-//     res.redirect('/');
-//   });
-// });
+// GET Logout Page
+router.get('/logout', (req, res) => {
+  res.render('logout');
+})
 
-router.delete('/logout', (req, res) => {
+// POST Logout
+router.post('/logout', (req, res) => {
   if (req.session) {
     req.session.destroy(err => {
       if (err) {
-        res.status(400).send('Unable to log out')
+        res.status(400).send('Unable to log out');
       } else {
-        res.send('Logout successful')
+        res.redirect('/');
       }
     });
   } else {
-    res.end()
+    res.redirect('/');
   }
 })
 
