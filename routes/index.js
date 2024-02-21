@@ -226,6 +226,14 @@ router.post('/login', [
   }),
 ]);
 
+// POST logout page (use post instead of get for maximum security)
+router.post('/logout', function(req, res, next){
+  req.logout(function(err) {
+    if (err) { return next(err); }
+    res.redirect('/');
+  });
+});
+
 // GET upgrade page
 router.get('/upgrade', async (req, res, next) => {
   const passwords = await Upgrade.findOne().exec();

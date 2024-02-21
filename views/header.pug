@@ -4,3 +4,8 @@ block header
       div.logo-block
         div.logo-text.blackbox Members
         div.logo-text.whitebox Only
+      div.menu-block
+        if currentUser
+          a.header-button(href='/logout') Log Out
+        else 
+          a.header-button(href='/login') Log In
