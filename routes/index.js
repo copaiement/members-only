@@ -227,12 +227,29 @@ router.post('/login', [
 ]);
 
 // POST logout page (use post instead of get for maximum security)
-router.post('/logout', function(req, res, next){
-  req.logout(function(err) {
-    if (err) { return next(err); }
-    res.redirect('/');
-  });
-});
+// router.post('/logout', function(req, res, next){
+//   if (req.session) {
+//     req.session.destroy();
+//   }
+//   req.logout(function(err) {
+//     if (err) { return next(err); }
+//     res.redirect('/');
+//   });
+// });
+
+router.delete('/logout', (req, res) => {
+  if (req.session) {
+    req.session.destroy(err => {
+      if (err) {
+        res.status(400).send('Unable to log out')
+      } else {
+        res.send('Logout successful')
+      }
+    });
+  } else {
+    res.end()
+  }
+})
 
 // GET upgrade page
 router.get('/upgrade', async (req, res, next) => {
