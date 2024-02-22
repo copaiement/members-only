@@ -1,15 +1,16 @@
 extends layout
 
 block content
-  h1= title
+  div.content
+    h1= title
 
-  form(method='POST' action='')
-    div.logout-confirm-text
-      div Are you sure you want to logout?
-    div.logout-confirm-buttons
-      button.btn.btn-primary(type='submit') Logout
-      a.cancelBtn(href='/') Cancel
-  if errors
-    ul
-      for error in errors
-        li!= error.msg
+    form(method='POST' action='')
+      div.logout-confirm-text
+        div Are you sure you want to logout?
+      div.logout-confirm-buttons
+        button.btn.btn-primary(type='submit') Logout
+        a.cancelBtn(href='/') Cancel
+    if errors
+      ul
+        for error in errors
+          li!= error.msg

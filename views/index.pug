@@ -30,7 +30,7 @@ block content
                   .message-user Posted By: #{message.username} 
                   .message-added Post Date: #{message.addedDate_formatted}
                 if currentUser.userType === 'admin'
-                  a.delete-button(href='/delete') Delete Message
+                  a.delete-button(href='/message/'+ message._id +'/delete') Delete Message
       else
         p Nothing Here
 

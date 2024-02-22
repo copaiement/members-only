@@ -68,6 +68,18 @@ router.post('/new', [
   }),
 ]);
 
+// GET Delete message (admin only)
+router.get('/message/:id/delete', async (req, res, next) => {
+  const message = await Message.findById(req.params.id).exec();
+  res.render('confirmDelete', { message: message });
+});
+
+// POST delete message (admin only)
+router.post('/message/:id/delete', async (req, res, next) => {
+  const message = await Message.findByIdAndDelete(req.params.id);
+  res.redirect('/');
+});
+
 // GET signup page
 router.get('/signup', (req, res, next) => {
   res.render('signup', { title: 'Signup Page'});

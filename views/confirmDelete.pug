@@ -1,0 +1,23 @@
+extends layout
+
+block content
+  div.content
+    h1= title
+
+    form(method='POST' action='')
+      div.delete-confirm-text
+        div Are you sure you want to delete this message?
+      div.message-tile
+        .message-text #{message.text}
+          if currentUser
+            .message-detail
+              if currentUser.userType !== 'basic'
+                .message-user Posted By: #{message.username} 
+                .message-added Post Date: #{message.addedDate_formatted}
+      div.logout-confirm-buttons
+        button.btn.btn-primary(type='submit') Delete
+        a.cancelBtn(href='/') Cancel
+    if errors
+      ul
+        for error in errors
+          li!= error.msg
