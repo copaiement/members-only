@@ -2,22 +2,20 @@ extends layout
 
 block content
   div.content
-    div.page-title #{title}
 
     //- check for login
     if currentUser
-      p Welcome #{currentUser.username}
-      p Member Type: #{currentUser.userType}
-      .links
-        a(href="/new") Add a Message
-        if currentUser.userType !== 'admin'
-          a(href="/upgrade") Upgrade Membership
+      div.welcome-modal
+        div Welcome #{currentUser.username}
+        .links
+          if currentUser.userType !== 'admin'
+            a(href="/upgrade") Upgrade Membership
     else
-      div.login-modal
-        p Please Create Account or Log In to post a message
-        div.login-buttons
-          a(href='/signup') Sign Up
-          a(href='/login') Log In
+      div.welcome-modal
+        div Please Create Account or Log In to post a message
+        div.login-button-container
+          a.login-button(href='/signup') Sign Up
+          a.login-button(href='/login') Log In
 
     block new_msg
 
@@ -27,10 +25,14 @@ block content
           .message-tile
             .message-text #{message.text}
             if currentUser
-              if currentUser.userType !== 'basic'
-                .message-user #{message.username} 
-                .message-added #{message.addedDate_formatted}
-              if currentUser.userType === 'admin'
-                a(href='/delete') Delete Message
+              .message-detail
+                if currentUser.userType !== 'basic'
+                  .message-user Posted By: #{message.username} 
+                  .message-added Post Date: #{message.addedDate_formatted}
+                if currentUser.userType === 'admin'
+                  a.delete-button(href='/delete') Delete Message
       else
         p Nothing Here
+
+    if currentUser 
+      a.add-message-button(href="/new") Add a Message

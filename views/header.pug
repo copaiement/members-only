@@ -1,11 +1,19 @@
 block header
   div.header
     div.header-content
-      div.logo-block
-        div.logo-text.blackbox Members
-        div.logo-text.whitebox Only
-      div.menu-block
-        if currentUser
-          a.header-button(href='/logout') Log Out
-        else 
-          a.header-button(href='/login') Log In
+      a.logo-button(href='/')
+        div.logo-block
+          div.logo-text.blackbox Members
+          div.logo-text.whitebox Only
+
+      if currentUser
+        div.userinfo-block
+          div.username-block
+            span.material-symbols-outlined person
+            div.username #{currentUser.username}
+          div.usertype-block
+            span.material-symbols-outlined military_tech
+            div.usertype #{currentUser.userType}
+        a.header-button(href='/logout') Log Out
+      else 
+        a.header-button(href='/login') Log In
