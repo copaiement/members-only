@@ -7,9 +7,9 @@ block content
     form(method='POST' action='')
       div.logout-confirm-text
         div Are you sure you want to logout?
-      div.logout-confirm-buttons
-        button.btn.btn-primary(type='submit') Logout
-        a.cancelBtn(href='/') Cancel
+      div.form-buttons
+        button.button.btn-primary(type='submit') Logout
+        a.button.cancel-button(href='/') Cancel
     if errors
       ul
         for error in errors

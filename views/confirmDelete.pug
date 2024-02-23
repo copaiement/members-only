@@ -15,8 +15,8 @@ block content
                 .message-user Posted By: #{message.username} 
                 .message-added Post Date: #{message.addedDate_formatted}
       div.logout-confirm-buttons
-        button.btn.btn-primary(type='submit') Delete
-        a.cancelBtn(href='/') Cancel
+        button.button.btn-primary(type='submit') Delete
+        a.button.cancel-button(href='/') Cancel
     if errors
       ul
         for error in errors

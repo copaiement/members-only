@@ -17,8 +17,9 @@ block content
       div.form-group
         label(for='confirm-password') Confirm Password:
         input#confirm-password.form-control(type='password' placeholder='Password' name='confirm-password' required='true' value='')
-      button.btn.btn-primary(type='submit') Submit
-      a.cancelBtn(href='/') Cancel
+      .form-buttons
+        button.button.btn-primary(type='submit') Submit
+        a.button.cancel-button(href='/') Cancel
     if errors
       ul
         for error in errors

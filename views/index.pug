@@ -7,15 +7,12 @@ block content
     if currentUser
       div.welcome-modal
         div Welcome #{currentUser.username}
-        .links
-          if currentUser.userType !== 'admin'
-            a(href="/upgrade") Upgrade Membership
     else
       div.welcome-modal
         div Please Create Account or Log In to post a message
         div.login-button-container
-          a.login-button(href='/signup') Sign Up
-          a.login-button(href='/login') Log In
+          a.button.login-button(href='/signup') Sign Up
+          a.button.login-button(href='/login') Log In
 
     block new_msg
 
@@ -30,9 +27,9 @@ block content
                   .message-user Posted By: #{message.username} 
                   .message-added Post Date: #{message.addedDate_formatted}
                 if currentUser.userType === 'admin'
-                  a.delete-button(href='/message/'+ message._id +'/delete') Delete Message
+                  a.button.delete-button(href='/message/'+ message._id +'/delete') Delete Message
       else
         p Nothing Here
 
-    if currentUser 
-      a.add-message-button(href="/new") Add a Message
+    if currentUser && !form 
+      a.button.add-message-button(href="/new") Add a Message

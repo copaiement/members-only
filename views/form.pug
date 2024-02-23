@@ -1,13 +1,13 @@
 extends index
 
 block new_msg
-  h3= title
-
-  form(method='POST' action='')
+  form.message-form(method='POST' action='')
     div.form-group
       label(for='message') Message:
       input#message.form-control(type='text' placeholder='Message...' name='message' required='true' value='')
-    button.btn.btn-primary(type='submit') Post Message
+    .form-buttons
+      button.button.btn-primary(type='submit') Post Message
+      a.button.cancel-button(href='/') Cancel
   if errors
     ul
       for error in errors

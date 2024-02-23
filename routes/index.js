@@ -17,15 +17,16 @@ router.get('/', async (req, res, next) => {
   const messages = await Message.find().exec();
 
   if (messages.length === 0) {
-    res.render('index', { title: 'Members Only', currentUser: req.user });
+    res.render('index', { title: 'Members Only', currentUser: req.user, form: false });
   } else {
-    res.render('index', { title: 'Members Only', currentUser: req.user, messages: messages});
+    res.render('index', { title: 'Members Only', currentUser: req.user, messages: messages, form: false });
   }
 });
 
 // GET new message page
-router.get('/new', (req, res, next) => {
-  res.render('form', { title: 'New Message' , currentUser: req.user });
+router.get('/new', async (req, res, next) => {
+  const messages = await Message.find().exec();
+  res.render('form', { title: 'New Message' , currentUser: req.user, messages: messages, form: true });
 });
 
 // POST new message
@@ -252,7 +253,7 @@ router.post('/logout', (req, res) => {
 // GET upgrade page
 router.get('/upgrade', async (req, res, next) => {
   const passwords = await Upgrade.findOne().exec();
-  res.render('upgrade', { title: 'Login Page', currentUser: req.user, memberPass: passwords.memberPass });
+  res.render('upgrade', { title: 'Upgrade Membership', currentUser: req.user, memberPass: passwords.memberPass });
 });
 
 // POST member upgrade

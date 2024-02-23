@@ -1,19 +1,22 @@
 extends layout
 
 block content
-  h1= title
-  p Current Member Level: #{currentUser.userType}
-  form(method='POST' action='')
-    div.form-group
-      label(for='memberCode') Upgrade Code:
-      input#memberCode.form-control(type='text' placeholder='Member code' name='memberCode' required='true' value='')
-    button.btn.btn-primary(type='submit') Submit
-    a.cancelBtn(href='/') Cancel
-
-  p Hint: a close INSPECTion might help you.
-  p.hiddenMSG Member password is: #{memberPass}
-  
-  if errors
-    ul
-      for error in errors
-        li!= error.msg
+  div.content
+    h1= title
+    div.member-level Current Member Level:
+    div.member-level #{currentUser.userType}
+    form(method='POST' action='')
+      div.form-group
+        label(for='memberCode') Upgrade Code:
+        input#memberCode.form-control(type='text' placeholder='Member code' name='memberCode' required='true' value='')
+      div.form-buttons
+        button.button.btn-primary(type='submit') Submit
+        a.button.cancel-button(href='/') Cancel
+    
+    p Hint: a close INSPECTion might help you.
+    p.hiddenMSG Member password is: #{memberPass}
+    
+    if errors
+      ul
+        for error in errors
+          li!= error.msg

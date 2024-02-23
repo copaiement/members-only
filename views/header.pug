@@ -14,6 +14,9 @@ block header
           div.usertype-block
             span.material-symbols-outlined military_tech
             div.usertype #{currentUser.userType}
-        a.header-button(href='/logout') Log Out
+        div.header-buttons
+          if currentUser.userType !== 'admin'
+            a.button.header-button.upgrade-button(href="/upgrade") Upgrade Membership
+          a.button.header-button(href='/logout') Log Out
       else 
-        a.header-button(href='/login') Log In
+        a.button.header-button(href='/login') Log In
