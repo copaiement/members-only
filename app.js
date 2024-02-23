@@ -25,9 +25,9 @@ mongoose.set('strictQuery', false);
 const mongoDB = process.env.MONGODB_URI;
 
 async function DBConnect() {
-  console.log('Connecting to mongo DB...')
+  console.log('Connecting to mongo DB...');
   await mongoose.connect(mongoDB);
-  console.log('Connected')
+  console.log('Connected');
 }
 DBConnect().catch((err) => console.log(err));
 
